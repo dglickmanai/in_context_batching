@@ -163,7 +163,8 @@ class Framework:
                         self.args.model_name,
                         config=config,
                         torch_dtype=torch_dtype,
-                        device_map='auto',
+                        # device_map='auto',
+                        device_map='sequential',
                         max_memory={i: f'{int(torch.cuda.mem_get_info()[0] / 1024 ** 3) - 5}GB' for i in
                                     range(torch.cuda.device_count())},
                         load_in_8bit=self.args.load_int8,
