@@ -24,6 +24,7 @@ from metrics import calculate_metric
 from utils import *
 from trainer import OurTrainer
 import random
+import wandb
 
 
 @dataclass
@@ -341,7 +342,7 @@ class Framework:
                                    eval_sample, verbose=(eval_id < 3))
             )
 
-        # Calculate metrics 
+        # Calculate metrics
         metric_name = getattr(self.task, "metric_name", "accuracy")
         metrics = {metric_name: calculate_metric(predictions, metric_name)}
         return metrics
@@ -383,7 +384,7 @@ class Framework:
                     correct_candidate_id = sample.candidates.index(sample.correct_candidate)
 
                 if self.args.non_diff:
-                    # For non-differentiable objective, there is no teacher forcing thus the 
+                    # For non-differentiable objective, there is no teacher forcing thus the
                     # current answer part is removed
                     encoded_candidates[correct_candidate_id] = encoded_candidates[correct_candidate_id][
                                                                :-option_lens[correct_candidate_id]]
@@ -492,6 +493,11 @@ def main():
 
     # Initialize trainer and load model
     framework = Framework(args, task)
+    wandb.init(
+        project="icp",
+        tags=[],
+        config=vars(args),
+    )
 
     if args.train_set_seed is not None or args.num_train_sets is not None:
         # Eval samples share one (or multiple) training set(s)
@@ -544,9 +550,10 @@ def main():
 
         metrics = framework.evaluate(train_sets, eval_samples, one_train_set_per_eval_sample=True)
         logger.info(metrics)
-        if args.local_rank <= 0:
-            write_metrics_to_file(metrics, "result/" + result_file_tag(
-                args) + "-onetrainpereval.json" if args.result_file is None else args.result_file)
+        wandb.log(metrics)
+        # if args.local_rank <= 0:
+        #     write_metrics_to_file(metrics, "result/" + result_file_tag(
+        #         args) + "-onetrainpereval.json" if args.result_file is None else args.result_file)
 
 
 if __name__ == "__main__":
