@@ -37,7 +37,7 @@ import numpy as np
 
 from tqdm.auto import tqdm
 from transformers import Trainer
-from sklearn.linear_model import LinearRegression, LogisticRegression, LogisticRegressionCV
+# from sklearn.linear_model import LinearRegression, LogisticRegression, LogisticRegressionCV
 
 # Integrations must be imported before ML frameworks:
 from transformers.integrations import (  # isort: split
