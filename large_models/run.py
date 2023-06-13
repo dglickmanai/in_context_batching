@@ -1,5 +1,7 @@
 import logging
+import os
 
+os.environ["CUDA_VISIBLE_DEVICES"] = "6"
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -535,9 +537,11 @@ def main():
             if not args.no_eval:
                 logger.info("===== Train set %d =====" % train_set_seed)
                 logger.info(metrics)
-                if args.local_rank <= 0:
-                    write_metrics_to_file(metrics, "result/" + result_file_tag(
-                        args) + f"-trainset{train_set_id}.json" if args.result_file is None else args.result_file)
+                wandb.log(metrics)
+
+                # if args.local_rank <= 0:
+                #     write_metrics_to_file(metrics, "result/" + result_file_tag(
+                #         args) + f"-trainset{train_set_id}.json" if args.result_file is None else args.result_file)
 
     else:
         # For each eval sample, there is a training set. no training is allowed
@@ -549,8 +553,8 @@ def main():
             eval_samples = task.valid_samples
 
         metrics = framework.evaluate(train_sets, eval_samples, one_train_set_per_eval_sample=True)
-        logger.info(metrics)
         wandb.log(metrics)
+        logger.info(metrics)
         # if args.local_rank <= 0:
         #     write_metrics_to_file(metrics, "result/" + result_file_tag(
         #         args) + "-onetrainpereval.json" if args.result_file is None else args.result_file)
