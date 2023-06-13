@@ -1,7 +1,10 @@
 import logging
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "6"
+from large_models.compute import get_random_with_gpu_with_gb_free
+
+gpu = get_random_with_gpu_with_gb_free(80)
+os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
