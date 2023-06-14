@@ -1,7 +1,7 @@
 import logging
 import os
 
-from large_models.compute import get_random_with_gpu_with_gb_free
+from compute import get_random_with_gpu_with_gb_free
 
 gpu = get_random_with_gpu_with_gb_free(80)
 os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
@@ -540,7 +540,7 @@ def main():
             if not args.no_eval:
                 logger.info("===== Train set %d =====" % train_set_seed)
                 logger.info(metrics)
-                wandb.log(metrics)
+            wandb.log(metrics)
 
                 # if args.local_rank <= 0:
                 #     write_metrics_to_file(metrics, "result/" + result_file_tag(
