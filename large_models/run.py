@@ -1,6 +1,6 @@
 import logging
 import os
-
+import random
 from compute import get_random_with_gpu_with_gb_free
 
 gpu = get_random_with_gpu_with_gb_free(80)
@@ -110,6 +110,9 @@ class OurArguments(TrainingArguments):
 
     # Auto saving when interrupted
     save_on_interrupt: bool = False  # save model when interrupted (useful for long training)
+    #
+    in_context_fine_tune: bool = False  # whether to fine-tune the model with in context examples
+    number_of_in_context_fine_tune_examples: int = 8  # number of in context examples to fine-tune
 
 
 def parse_args():
@@ -375,9 +378,12 @@ class Framework:
             Convert samples to HF-compatible dataset
             """
             data = []
-            for sample in samples:
+            for index, sample in enumerate(samples):
+                other_items = samples[:index] + samples[index + 1:]
+                train_samples = [] if not self.args.in_context_fine_tune else random.sample(other_items,
+                                                                                            self.args.number_of_in_context_fine_tune_examples)
                 encoded_candidates, option_lens = encode_prompt(
-                    self.task, self.task.get_template(), [], sample, self.tokenizer,
+                    self.task, self.task.get_template(), train_samples, sample, self.tokenizer,
                     max_length=self.args.max_length, generation=self.task.generation, generation_with_gold=True,
                     max_new_tokens=self.args.max_new_tokens
                 )
@@ -540,7 +546,7 @@ def main():
             if not args.no_eval:
                 logger.info("===== Train set %d =====" % train_set_seed)
                 logger.info(metrics)
-            wandb.log(metrics)
+                wandb.log(metrics)
 
                 # if args.local_rank <= 0:
                 #     write_metrics_to_file(metrics, "result/" + result_file_tag(

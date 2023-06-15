@@ -1,0 +1,32 @@
+
+_convert: gets one eval_sample .
+ returns 2 list of tokens:[sample token:True] [sample tokens:False]
+
+it is called train_as_classification..
+probably it scores the 2 options, and makes it so the correct label will get higher score..
+
+interesting part create example before batching:
+                if self.args.train_as_classification:
+                    # For classification, we provide the label as the correct candidate id
+                    data.append([{"input_ids": encoded_candidates[_i], "labels": correct_candidate_id,
+                                  "option_len": option_lens[_i], "num_options": len(sample.candidates)} for _i in
+                                 range(len(encoded_candidates))])
+
+----
+DataCollatorWithPaddingAndNesting: gets a list of size batch_size x num_options(e.g True, False)
+flatting into one batch is done here
+
+---
+forward_wrap_with_option_len:
+    loss = loss_fct(selected_log_probs, labels)
+
+select_log_probs shape is batch_size x num_options..
+!! a good option would be passing something like "num permutations", and comparing individual permutations.
+E.g now the input to forward_wrap_with_option_len is
+ (batch_size x num_options) x n_tokens
+If I pass (batch_size x num_option x n_permutations) it should fix it..
+I only need to compare each permutation with itself(different label)..
+Just need to make sure they are batched togeter::
+!!! If I create a list of size (num_options x n_permutation) in "interesting part create example before batching" Should fix it..
+
+
