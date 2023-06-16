@@ -113,6 +113,7 @@ class OurArguments(TrainingArguments):
     #
     in_context_fine_tune: bool = False  # whether to fine-tune the model with in context examples
     number_of_in_context_fine_tune_examples: int = 8  # number of in context examples to fine-tune
+    permutations_per_examples: int = 1  # number of permutations per example to create in in_context_fine_tune. The lengths of the dataset will be num_train * permutations_per_examples
 
 
 def parse_args():
@@ -422,7 +423,10 @@ class Framework:
             return data
 
         with count_time("Tokenizing training samples"):
-            train_dataset = HFDataset(_convert(train_samples))
+            #_convert returns each time training examples with different random context
+            train_converted = sum([_convert(train_samples) for _ in range(self.args.permutations_per_examples)],
+                                  []) if self.args.in_context_fine_tune else _convert(train_samples)
+            train_dataset = HFDataset(train_converted)
             eval_dataset = HFDataset(_convert(eval_samples))
 
         if self.args.only_train_option and not self.args.non_diff:
