@@ -113,7 +113,7 @@ class OurArguments(TrainingArguments):
     #
     in_context_fine_tune: bool = False  # whether to fine-tune the model with in context examples
     number_of_in_context_fine_tune_examples: int = 8  # number of in context examples to fine-tune
-    permutations_per_examples: int = 1  # number of permutations per example to create in in_context_fine_tune. The lengths of the dataset will be num_train * permutations_per_examples
+    permutations_per_example: int = 1  # number of permutations per example to create in in_context_fine_tune. The lengths of the dataset will be num_train * permutations_per_examples
 
 
 def parse_args():
@@ -374,38 +374,48 @@ class Framework:
             def __getitem__(self, idx):
                 return self.data[idx]
 
-        def _convert(samples):
+        def _convert(samples, training):
             """
             Convert samples to HF-compatible dataset
             """
             data = []
             for index, sample in enumerate(samples):
                 other_items = samples[:index] + samples[index + 1:]
-                train_samples = [] if not self.args.in_context_fine_tune else random.sample(other_items,
-                                                                                            self.args.number_of_in_context_fine_tune_examples)
-                encoded_candidates, option_lens = encode_prompt(
-                    self.task, self.task.get_template(), train_samples, sample, self.tokenizer,
-                    max_length=self.args.max_length, generation=self.task.generation, generation_with_gold=True,
-                    max_new_tokens=self.args.max_new_tokens
-                )
-                if self.task.generation:
-                    correct_candidate_id = 0
-                elif isinstance(sample.correct_candidate, list):
-                    correct_candidate_id = sample.candidates.index(sample.correct_candidate[0])
-                else:
-                    correct_candidate_id = sample.candidates.index(sample.correct_candidate)
 
-                if self.args.non_diff:
-                    # For non-differentiable objective, there is no teacher forcing thus the
-                    # current answer part is removed
-                    encoded_candidates[correct_candidate_id] = encoded_candidates[correct_candidate_id][
-                                                               :-option_lens[correct_candidate_id]]
+                if training and self.args.in_context_fine_tune:
+                    assert self.args.train_as_classification
+                    num_encoded_prompts = self.args.permutations_per_example
+                else:
+                    num_encoded_prompts = 1
+                all_encoded_candidates, all_option_lens = [], []
+                for _ in range(num_encoded_prompts):
+                    train_samples = [] if not self.args.in_context_fine_tune else random.sample(other_items,
+                                                                                                self.args.number_of_in_context_fine_tune_examples)
+                    encoded_candidates, option_lens = encode_prompt(
+                        self.task, self.task.get_template(), train_samples, sample, self.tokenizer,
+                        max_length=self.args.max_length, generation=self.task.generation, generation_with_gold=True,
+                        max_new_tokens=self.args.max_new_tokens
+                    )
+                    if self.task.generation:
+                        correct_candidate_id = 0
+                    elif isinstance(sample.correct_candidate, list):
+                        correct_candidate_id = sample.candidates.index(sample.correct_candidate[0])
+                    else:
+                        correct_candidate_id = sample.candidates.index(sample.correct_candidate)
+
+                    if self.args.non_diff:
+                        # For non-differentiable objective, there is no teacher forcing thus the
+                        # current answer part is removed
+                        encoded_candidates[correct_candidate_id] = encoded_candidates[correct_candidate_id][
+                                                                   :-option_lens[correct_candidate_id]]
+                    all_encoded_candidates.extend(encoded_candidates)
+                    all_option_lens.extend(option_lens)
 
                 if self.args.train_as_classification:
                     # For classification, we provide the label as the correct candidate id
-                    data.append([{"input_ids": encoded_candidates[_i], "labels": correct_candidate_id,
-                                  "option_len": option_lens[_i], "num_options": len(sample.candidates)} for _i in
-                                 range(len(encoded_candidates))])
+                    data.append([{"input_ids": all_encoded_candidates[_i], "labels": correct_candidate_id,
+                                  "option_len": all_option_lens[_i], "num_options": len(sample.candidates)} for _i in
+                                 range(len(all_encoded_candidates))])
                 elif self.args.only_train_option:
                     # Otherwise, it is just LM-style teacher forcing
                     if self.args.non_diff:
@@ -423,11 +433,10 @@ class Framework:
             return data
 
         with count_time("Tokenizing training samples"):
-            #_convert returns each time training examples with different random context
-            train_converted = sum([_convert(train_samples) for _ in range(self.args.permutations_per_examples)],
-                                  []) if self.args.in_context_fine_tune else _convert(train_samples)
+            # _convert returns each time training examples with different random context
+            train_converted = _convert(train_samples, training=True)
             train_dataset = HFDataset(train_converted)
-            eval_dataset = HFDataset(_convert(eval_samples))
+            eval_dataset = HFDataset(_convert(eval_samples, training=False))
 
         if self.args.only_train_option and not self.args.non_diff:
             # If --only_train_option and not with a non-differentiable objective, we wrap the forward function
