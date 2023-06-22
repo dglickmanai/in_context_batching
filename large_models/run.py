@@ -114,6 +114,7 @@ class OurArguments(TrainingArguments):
     in_context_fine_tune: bool = False  # whether to fine-tune the model with in context examples
     number_of_in_context_fine_tune_examples: int = 8  # number of in context examples to fine-tune
     permutations_per_example: int = 1  # number of permutations per example to create in in_context_fine_tune. The lengths of the dataset will be num_train * permutations_per_examples
+    in_context_fine_tune_v2: bool = False  # dont batch togeter, just create move context examples..
 
 
 def parse_args():
@@ -434,7 +435,13 @@ class Framework:
 
         with count_time("Tokenizing training samples"):
             # _convert returns each time training examples with different random context
-            train_converted = _convert(train_samples, training=True)
+            if self.args.in_context_fine_tune_v2:
+                train_converted = sum(
+                    [_convert(train_samples, training=False) for _ in range(self.args.permutations_per_example)],
+                    []) if self.args.in_context_fine_tune else _convert(train_samples, False)
+
+            else:
+                train_converted = _convert(train_samples, training=True)
             train_dataset = HFDataset(train_converted)
             eval_dataset = HFDataset(_convert(eval_samples, training=False))
 
@@ -546,7 +553,10 @@ def main():
                 framework.train(train_samples, dev_samples if dev_samples is not None else eval_samples)
 
                 if not args.no_eval:
-                    metrics = framework.evaluate([], eval_samples)  # No in-context learning if there is training
+                    in_context_samples = [] if not args.in_context_fine_tune else random.sample(train_samples,
+                                                                                                args.number_of_in_context_fine_tune_examples)
+                    metrics = framework.evaluate(in_context_samples,
+                                                 eval_samples)  # No in-context learning if there is training
                     if dev_samples is not None:
                         dev_metrics = framework.evaluate([], dev_samples)
                         for m in dev_metrics:
