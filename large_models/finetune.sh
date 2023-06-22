@@ -60,7 +60,7 @@ echo "SEED: $SEED"
 echo "MODE: $MODE"
 echo "Extra args: $EXTRA_ARGS $TASK_ARGS"
 
-python run.py \
+echo "python run.py \
     --model_name $MODEL \
     --task_name $TASK \
     --output_dir result/$TASK-${MODEL_NAME}-$TAG --tag $TAG --train_set_seed $SEED --num_train $TRAIN --num_dev $DEV --num_eval $EVAL --logging_steps 10 \
@@ -70,4 +70,4 @@ python run.py \
     --train_as_classification \
     $EXTRA_ARGS \
     $TASK_ARGS \
-    "$@"
+    "$@""

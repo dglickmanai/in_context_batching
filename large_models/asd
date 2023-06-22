@@ -29,34 +29,56 @@ nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps
 
 with in_context_fine_tune
 nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --per_device_train_batch_size 8 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name RTE --output_dir result/RTE--ft-5-8-1e-5-0 --in_context_fine_tune --train_set_seed 1  &
+v2:
+nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --per_device_train_batch_size 8 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name RTE --output_dir result/RTE--ft-5-8-1e-5-0 --in_context_fine_tune --in_context_fine_tune_v2 --train_set_seed 1  &
+
 
 with multiple permutations
-nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --per_device_train_batch_size 8 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name RTE --output_dir result/RTE--ft-5-8-1e-5-0 --in_context_fine_tune --permutations_per_example 2 --train_set_seed 1  &
-
-
-nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name RTE --output_dir result/RTE--ft-5-8-1e-5-0 --in_context_fine_tune --permutations_per_example 4 --per_device_train_batch_size 2 --gradient_accumulation_steps 4 --train_set_seed 1  &
-sleep 15
-nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name RTE --output_dir result/RTE--ft-5-8-1e-5-0 --in_context_fine_tune --permutations_per_example 4 --per_device_train_batch_size 2 --gradient_accumulation_steps 4 --train_set_seed 2  &
-sleep 15
-nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name RTE --output_dir result/RTE--ft-5-8-1e-5-0 --in_context_fine_tune --permutations_per_example 4 --per_device_train_batch_size 2 --gradient_accumulation_steps 4 --train_set_seed 3  &
-sleep 15
-nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name RTE --output_dir result/RTE--ft-5-8-1e-5-0 --in_context_fine_tune --permutations_per_example 4 --per_device_train_batch_size 2 --gradient_accumulation_steps 4 --train_set_seed 4  &
-sleep 15
-nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name RTE --output_dir result/RTE--ft-5-8-1e-5-0 --in_context_fine_tune --permutations_per_example 4 --per_device_train_batch_size 2 --gradient_accumulation_steps 4 --train_set_seed 5  &
-sleep 15
-nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name RTE --output_dir result/RTE--ft-5-8-1e-5-0 --in_context_fine_tune --permutations_per_example 4 --per_device_train_batch_size 4 --gradient_accumulation_steps 2 --train_set_seed 6  &
-
-
-nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name RTE --output_dir result/RTE--ft-5-8-1e-5-0 --in_context_fine_tune --permutations_per_example 1 --per_device_train_batch_size 8 --gradient_accumulation_steps 1 --train_set_seed 1  &
-sleep 15
-nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name RTE --output_dir result/RTE--ft-5-8-1e-5-0 --in_context_fine_tune --permutations_per_example 1 --per_device_train_batch_size 8 --gradient_accumulation_steps 1 --train_set_seed 2  &
-sleep 15
-nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name RTE --output_dir result/RTE--ft-5-8-1e-5-0 --in_context_fine_tune --permutations_per_example 1 --per_device_train_batch_size 8 --gradient_accumulation_steps 1 --train_set_seed 3  &
-sleep 15
-nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name RTE --output_dir result/RTE--ft-5-8-1e-5-0 --in_context_fine_tune --permutations_per_example 1 --per_device_train_batch_size 8 --gradient_accumulation_steps 1 --train_set_seed 4  &
-sleep 15
-nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name RTE --output_dir result/RTE--ft-5-8-1e-5-0 --in_context_fine_tune --permutations_per_example 1 --per_device_train_batch_size 8 --gradient_accumulation_steps 1 --train_set_seed 5  &
-sleep 15
-nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name RTE --output_dir result/RTE--ft-5-8-1e-5-0 --in_context_fine_tune --permutations_per_example 4 --per_device_train_batch_size 4 --gradient_accumulation_steps 2 --train_set_seed 6  &
+nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --per_device_train_batch_size 8 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name RTE --output_dir result/RTE--ft-5-8-1e-5-0 --in_context_fine_tune --in_context_fine_tune_v2 --permutations_per_example 4 --train_set_seed 1  &
 
 ----
+
+SST-2:
+ICL:
+nohup python large_models/run.py  --num_train 16 --num_eval 1000  --task_name SST2 --output_dir result/RTE--ft-5-8-1e-5-0 --train_set_seed 1 &
+FT:
+nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --per_device_train_batch_size 8 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name SST2 --output_dir result/RTE--ft-5-8-1e-5-0 --train_set_seed 1  &
+with in_context_fine_tune
+nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --per_device_train_batch_size 8 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name SST2 --output_dir result/RTE--ft-5-8-1e-5-0 --in_context_fine_tune  --train_set_seed 1  &
+with multiple permutations
+nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --per_device_train_batch_size 8 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name SST2 --output_dir result/RTE--ft-5-8-1e-5-0 --in_context_fine_tune --permutations_per_example 4 --per_device_train_batch_size 2 --gradient_accumulation_steps 4 --train_set_seed 1  &
+--
+take 2, larger lr:
+nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 2e-5 --num_train_epochs 5 --per_device_train_batch_size 8 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name SST2 --output_dir result/RTE--ft-5-8-1e-5-0 --in_context_fine_tune --permutations_per_example 4 --per_device_train_batch_size 2 --gradient_accumulation_steps 4 --train_set_seed 1  &
+--
+v2:
+nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --per_device_train_batch_size 8 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name SST2 --output_dir result/RTE--ft-5-8-1e-5-0 --in_context_fine_tune  --in_context_fine_tune_v2 --permutations_per_example 4 --train_set_seed 1  &
+
+----
+CB:
+ICL:
+nohup python large_models/run.py  --num_train 16 --num_eval 1000  --task_name CB --output_dir result/RTE--ft-5-8-1e-5-0 --train_set_seed 1 &
+
+FT:
+nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --per_device_train_batch_size 8 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name CB --output_dir result/RTE--ft-5-8-1e-5-0 --train_set_seed 1  &
+
+
+In context fine-tune:
+nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --per_device_train_batch_size 8 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name CB --output_dir result/RTE--ft-5-8-1e-5-0 --in_context_fine_tune  --train_set_seed 1  &
+with multiple permutations
+nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --per_device_train_batch_size 8 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name CB --output_dir result/RTE--ft-5-8-1e-5-0 --in_context_fine_tune --permutations_per_example 4 --per_device_train_batch_size 2 --gradient_accumulation_steps 4 --train_set_seed 1  &
+v2:
+nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --per_device_train_batch_size 8 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name CB --output_dir result/RTE--ft-5-8-1e-5-0 --in_context_fine_tune  --in_context_fine_tune_v2 --permutations_per_example 4 --train_set_seed 1  &
+
+v2 lora
+nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --per_device_train_batch_size 8 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name CB --output_dir result/RTE--ft-5-8-1e-5-0 --in_context_fine_tune  --in_context_fine_tune_v2 --permutations_per_example 4 --lora --train_set_seed 1  &
+
+Boolq
+ICL:
+nohup python large_models/run.py  --num_train 16 --num_eval 1000  --task_name BoolQ --output_dir result/RTE--ft-5-8-1e-5-0 --train_set_seed 1 &
+FT:
+nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --per_device_train_batch_size 8 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name BoolQ --output_dir result/RTE--ft-5-8-1e-5-0 --train_set_seed 1  &
+In context ft:
+nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --per_device_train_batch_size 8 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name BoolQ --output_dir result/RTE--ft-5-8-1e-5-0 --in_context_fine_tune  --train_set_seed 1  &
+v2 with permutations:
+nohup python large_models/run.py  --num_train 16 --num_eval 1000 --logging_steps 10 --trainer regular --learning_rate 1e-5 --num_train_epochs 5 --per_device_train_batch_size 8 --evaluation_strategy epoch --save_total_limit 0 --train_as_classification --task_name Boolq --output_dir result/RTE--ft-5-8-1e-5-0 --in_context_fine_tune  --in_context_fine_tune_v2 --permutations_per_example 4 --train_set_seed 1  &

@@ -161,6 +161,7 @@ class Framework:
                 model = AutoModelForCausalLM.from_pretrained(
                     self.args.model_name,
                     config=config,
+                    trust_remote_code=True,
                 )
             else:
                 # Auto device loading
