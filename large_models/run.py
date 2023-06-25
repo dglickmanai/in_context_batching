@@ -144,7 +144,7 @@ class Framework:
         Load HuggingFace models
         """
         with count_time("Loading model with FP%d" % (16 if self.args.load_float16 else 32)):
-            config = AutoConfig.from_pretrained(self.args.model_name)
+            config = AutoConfig.from_pretrained(self.args.model_name, trust_remote_code=True)
             if self.args.untie_emb:
                 # Untie embeddings/LM head
                 logger.warn("Untie embeddings and LM head")
@@ -175,18 +175,20 @@ class Framework:
                         self.args.model_name,
                         config=config,
                         torch_dtype=torch_dtype,
-                        # device_map='auto',
-                        device_map='sequential',
-                        max_memory={i: f'{int(torch.cuda.mem_get_info()[0] / 1024 ** 3) - 5}GB' for i in
-                                    range(torch.cuda.device_count())},
+                        device_map='auto',
+                        # device_map='sequential',
+                        # max_memory={i: f'{int(torch.cuda.mem_get_info()[0] / 1024 ** 3) - 5}GB' for i in
+                        #             range(torch.cuda.device_count())},
                         load_in_8bit=self.args.load_int8,
+                        trust_remote_code=True,
                     )
                 else:
                     model = AutoModelForCausalLM.from_pretrained(
                         self.args.model_name,
                         config=config,
                         torch_dtype=torch_dtype,
-                        load_in_8bit=self.args.load_int8,
+                        load_in_8bit=self.args.load_int8, trust_remote_code=True,
+
                     )
 
             model.eval()
@@ -197,6 +199,10 @@ class Framework:
         # HF tokenizer bug fix
         if "opt" in self.args.model_name:
             tokenizer.bos_token_id = 0
+        if 'falcon' in self.args.model_name:
+            tokenizer.pad_token = tokenizer.eos_token
+            # tokenizer.bos_token_id = 1
+            # tokenizer.add_bos_token = True
 
         # Prefix tuning/LoRA
         if self.args.prefix_tuning:
