@@ -1,0 +1,4 @@
+ft optimizer is adam
+bs 8 works, bs 16 is oom
+
+0.00001 best for rte
